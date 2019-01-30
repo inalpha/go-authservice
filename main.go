@@ -4,19 +4,37 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
+	sessions "github.com/kataras/go-sessions"
 	"golang.org/x/oauth2"
 )
 
+var sess *sessions.Sessions
+
 func main() {
 	mux := http.NewServeMux()
+	sess = sessions.New(sessions.Config{
+		Cookie:  "_sessions",
+		Expires: time.Hour * 2,
+	})
 	mux.HandleFunc("/", okHandler)
-	// h := &Handler{}
 	mux.HandleFunc("/login", handleGoogleLogin)
 	mux.HandleFunc("/callback", handleGoogleCallback)
+	mux.HandleFunc("/set", setSession)
+	mux.HandleFunc("/get", getSession)
 	http.ListenAndServe(":4000", mux)
 }
 
+func setSession(w http.ResponseWriter, r *http.Request) {
+	s := sess.Start(w, r)
+	s.Set("name", "iris")
+	w.Write([]byte(fmt.Sprintf("All ok session setted to: %s", s.GetString("name"))))
+}
+func getSession(w http.ResponseWriter, r *http.Request) {
+	name := sess.Start(w, r).GetString("name")
+	w.Write([]byte(fmt.Sprintf("The name on the /set was: %s", name)))
+}
 func okHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
