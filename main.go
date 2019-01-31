@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"sync"
 	"time"
 
 	sessions "github.com/kataras/go-sessions"
@@ -12,6 +13,32 @@ import (
 
 var sess *sessions.Sessions
 
+type Client struct {
+	name string
+}
+type SessionsStore struct {
+	store map[string]Client
+	lock  sync.RWMutex
+}
+
+func (ss *SessionsStore) Get(id string) *Client {
+	ss.lock.RLock()
+	c, ok := ss.store[id]
+	ss.lock.RUnlock()
+	if !ok {
+		return nil
+	}
+	return &c
+}
+
+func (ss *SessionsStore) Set(id string, c Client) {
+	ss.lock.Lock()
+	ss.store[id] = c
+	ss.lock.Unlock()
+}
+
+var csess = SessionsStore{}
+
 func main() {
 	mux := http.NewServeMux()
 	sess = sessions.New(sessions.Config{
@@ -19,10 +46,21 @@ func main() {
 		Expires: time.Hour * 2,
 	})
 	mux.HandleFunc("/", okHandler)
-	mux.HandleFunc("/login", handleGoogleLogin)
-	mux.HandleFunc("/callback", handleGoogleCallback)
-	mux.HandleFunc("/set", setSession)
-	mux.HandleFunc("/get", getSession)
+	// mux.HandleFunc("/login", handleGoogleLogin)
+	// mux.HandleFunc("/callback", handleGoogleCallback)
+	// mux.HandleFunc("/set", setSession)
+	// mux.HandleFunc("/get", getSession)
+
+	// mux.HandleFunc("/get", getSession)
+	// mux.HandleFunc("/set", setSession)
+
+	mux.Handle("/auth/", http.StripPrefix("/auth/", &Auth{
+		sess: sessions.New(sessions.Config{
+			Cookie:  "_sessions",
+			Expires: time.Hour * 2,
+		}),
+	}))
+
 	http.ListenAndServe(":4000", mux)
 }
 
