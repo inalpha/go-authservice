@@ -30,6 +30,7 @@ require (
 	github.com/valyala/fasthttp v1.1.0 // indirect
 	github.com/xeipuuv/gojsonschema v1.1.0 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
+	golang.org/x/crypto v0.0.0-20190208162236-193df9c0f06f
 	golang.org/x/net v0.0.0-20190125091013-d26f9f9a57f3 // indirect
 	golang.org/x/oauth2 v0.0.0-20190115181402-5dab4167f31c
 	golang.org/x/sys v0.0.0-20190129075346-302c3dd5f1cc // indirect
