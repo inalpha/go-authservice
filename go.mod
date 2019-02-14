@@ -3,6 +3,7 @@ module authservice
 require (
 	github.com/dgryski/go-farm v0.0.0-20190104051053-3adb47b1fb0f // indirect
 	github.com/etcd-io/bbolt v1.3.2 // indirect
+	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
