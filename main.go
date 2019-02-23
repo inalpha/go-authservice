@@ -1,8 +1,20 @@
 package main
 
-import "github.com/gofrs/uuid"
+import (
+	"log"
+
+	jwt "gopkg.in/square/go-jose.v2/jwt"
+)
 
 func main() {
-	var u1 = uuid.Must(uuid.NewV4())
-	println(u1.String())
+	password, err := New("Hello", "1234")
+	if err != nil {
+		log.Fatal(err)
+	}
+	token, err := password.ResetToken()
+	if err != nil {
+		log.Fatal(err)
+	}
+	jwt.Signed
+	log.Println(token)
 }
